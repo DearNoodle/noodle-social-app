@@ -1,66 +1,55 @@
-import React, { createContext, useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 
-import MainPage from "./pages/auth/MainPage";
-import LoginPage from "./pages/auth/LoginPage";
-import RegisterPage from "./pages/auth/RegisterPage";
+import { UserIdContext } from "./lib/context";
+import api from "./lib/api";
 
-import HomePage from "./pages/main/HomePage";
-import FollowsPage from "./pages/main/FollowsPage";
-import ChatsPage from "./pages/main/ChatsPage";
-import ProfilePage from "./pages/main/ProfilePage";
-
-import UserPage from "./pages/sub/UserPage";
-import PostPage from "./pages/sub/PostPage";
-import ChatPage from "./pages/sub/ChatPage";
-
-import axios from "axios";
-
-export const apiUrl = "https://dearnoodle-odin-book.up.railway.app/api";
-export const UserIdContext = createContext(null);
+import LandingPage from "./pages/LandingPage";
+import LoginPage from "./pages/LoginPage";
+import RegisterPage from "./pages/RegisterPage";
+import HomePage from "./pages/HomePage";
+import FollowsPage from "./pages/FollowsPage";
+import ProfilePage from "./pages/ProfilePage";
+import UserPage from "./pages/UserPage";
+import PostPage from "./pages/PostPage";
+import NotFoundPage from "./pages/NotFoundPage";
 
 function App() {
-  const [userId, setUserId] = useState();
+  const [userId, setUserId] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
 
-  async function fetchUserId() {
-    try {
-      const response = await axios.get(`${apiUrl}/user`, {
-        withCredentials: true,
-      });
-      setUserId(response.data.userId);
-    } catch (err) {
-      console.error(err);
-    } finally {
-      setIsLoading(false);
-    }
-  }
-
   useEffect(() => {
-    fetchUserId();
+    api
+      .get("/user")
+      .then((res) => setUserId(res.data.userId))
+      .catch(() => {})
+      .finally(() => setIsLoading(false));
   }, []);
 
   if (isLoading) {
-    return <h1>Loading...</h1>;
+    return (
+      <div className="min-h-screen flex flex-col items-center justify-center gap-6">
+        <div className="w-12 h-12 rounded-2xl bg-acid font-display text-2xl flex items-center justify-center text-acid-ink animate-pulse">
+          n
+        </div>
+        <p className="eyebrow animate-pulse">boiling water…</p>
+      </div>
+    );
   }
 
   return (
     <UserIdContext.Provider value={{ userId, setUserId }}>
       <BrowserRouter>
         <Routes>
-          <Route path="/" element={<MainPage />} />
-          <Route
-            path="/login"
-            element={<LoginPage fetchUserId={fetchUserId} />}
-          />
+          <Route path="/" element={<LandingPage />} />
+          <Route path="/login" element={<LoginPage />} />
           <Route path="/register" element={<RegisterPage />} />
           <Route path="/home" element={<HomePage />} />
           <Route path="/follows" element={<FollowsPage />} />
           <Route path="/profile" element={<ProfilePage />} />
-          <Route path="/chats" element={<ChatsPage />} />
-          <Route path="/chat/user/:id" element={<ChatPage />} />
           <Route path="/user/:id" element={<UserPage />} />
           <Route path="/post/:id" element={<PostPage />} />
+          <Route path="*" element={<NotFoundPage />} />
         </Routes>
       </BrowserRouter>
     </UserIdContext.Provider>

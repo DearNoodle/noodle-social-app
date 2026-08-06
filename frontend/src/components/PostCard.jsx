@@ -1,40 +1,47 @@
-import React, { useState, useEffect, useRef, useContext } from "react";
-import { Link, useNavigate, useParams } from "react-router-dom";
-import { apiUrl, UserIdContext } from "../App";
+import { Link } from "react-router-dom";
+import Avatar from "./Avatar";
+import { formatRelativeTime } from "../lib/time";
+import { ChatIcon, HeartIcon } from "./icons";
 
 function PostCard({ post }) {
   return (
-    <div
-      key={post.id}
-      className="bg-white shadow rounded-md p-4 flex items-center justify-between"
+    <Link
+      to={`/post/${post.id}`}
+      className="card block p-5 transition-all duration-150 hover:border-acid/50 hover:-translate-y-0.5 hover:shadow-[0_8px_40px_-12px_rgba(214,255,63,0.15)]"
     >
-      <div>
-        <Link to={`/user/${post.author.id}`} className="flex items-center">
-          {post.author.avatarUrl && (
-            <img
-              src={post.author.avatarUrl}
-              alt={`${post.author.username}'s avatar`}
-              className="w-8 h-8 rounded-full mr-2"
-            />
-          )}
-          <p className="font-semibold">{post.author.username}</p>
-        </Link>
-        <Link to={`/post/${post.id}`}>
-          <h3 className="text-lg font-medium">{post.title}</h3>
-          <p>{post.content}</p>
-        </Link>
-        <p className="mt-1">
-          {post._count.likedBy} likes {post._count.comments} comments
-        </p>
+      <div className="flex items-center gap-3">
+        <Avatar user={post.author} className="w-10 h-10" />
+        <div className="min-w-0">
+          <p className="text-sm font-semibold truncate">{post.author.username}</p>
+          <p className="text-xs text-muted">{formatRelativeTime(post.createdAt)}</p>
+        </div>
       </div>
+
+      <h3 className="font-display text-xl leading-snug mt-4">{post.title}</h3>
+      <p className="text-sm text-muted mt-1.5 leading-relaxed line-clamp-4">{post.content}</p>
+
       {post.postImageUrl && (
-        <img
-          src={post.postImageUrl}
-          alt={`Post ${post.id}`}
-          className="w-24 h-24 rounded-xl ml-4 object-cover"
-        />
+        <div className="mt-4 overflow-hidden rounded-xl border border-line">
+          <img
+            src={post.postImageUrl}
+            alt=""
+            className="w-full h-52 object-cover transition-transform duration-300 hover:scale-[1.02]"
+            loading="lazy"
+          />
+        </div>
       )}
-    </div>
+
+      <div className="mt-4 pt-3 border-t border-line flex items-center gap-5 text-xs text-muted">
+        <span className="inline-flex items-center gap-1.5">
+          <HeartIcon className="w-3.5 h-3.5" />
+          {post._count?.likedBy ?? 0}
+        </span>
+        <span className="inline-flex items-center gap-1.5">
+          <ChatIcon className="w-3.5 h-3.5" />
+          {post._count?.comments ?? 0}
+        </span>
+      </div>
+    </Link>
   );
 }
 

@@ -1,66 +1,65 @@
-import React, { useState, useEffect, useRef, useContext } from "react";
-import { Link, useNavigate, useParams } from "react-router-dom";
-import { apiUrl, UserIdContext } from "../App";
-import axios from "axios";
+import { Link, NavLink, useNavigate } from "react-router-dom";
+import { useUserId } from "../lib/context";
+import api from "../lib/api";
+import { LogoutIcon } from "./icons";
 
-function NavBar({ userId, setUserId }) {
+function NavBar() {
   const navigate = useNavigate();
+  const { setUserId } = useUserId();
 
-  async function handleLogout(event) {
-    event.preventDefault();
+  async function handleLogout() {
     try {
-      await axios.post(`${apiUrl}/logout`, null, {
-        withCredentials: true,
-      });
-      setUserId(null);
-      navigate("/");
-      console.log("Logout successful");
-    } catch (error) {
-      console.error("Logout failed:", error);
+      await api.post("/logout");
+    } catch {
+      // session already gone — still navigate away
     }
+    setUserId(null);
+    navigate("/");
   }
 
+  const linkClass = ({ isActive }) =>
+    `px-3 py-2 rounded-lg text-sm font-medium transition-colors ${
+      isActive ? "text-acid" : "text-muted hover:text-text"
+    }`;
+
   return (
-    <nav className="flex justify-between items-center mb-6">
-      <Link
-        to="/home"
-        className="bg-blue-500 hover:bg-blue-600 text-white font-medium py-2 px-4 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-300"
-      >
-        Explore
-      </Link>
-      <Link
-        to="/follows"
-        className="bg-blue-500 hover:bg-blue-600 text-white font-medium py-2 px-4 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-300"
-      >
-        Follows
-      </Link>
-      <Link
-        to={`/user/${userId}`}
-        className="bg-blue-500 hover:bg-blue-600 text-white font-medium py-2 px-4 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-300"
-      >
-        Posts
-      </Link>
-      <Link
-        to="/chats"
-        className="bg-blue-500 hover:bg-blue-600 text-white font-medium py-2 px-4 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-300"
-      >
-        Chats
-      </Link>
-      <Link
-        to="/profile"
-        className="bg-blue-500 hover:bg-blue-600 text-white font-medium py-2 px-4 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-300"
-      >
-        Profile
-      </Link>
-      <form onSubmit={handleLogout}>
-        <button
-          type="submit"
-          className="bg-red-500 hover:bg-red-600 text-white font-medium py-2 px-4 rounded-md focus:outline-none focus:ring-2 focus:ring-red-300"
-        >
-          Logout
-        </button>
-      </form>
-    </nav>
+    <header className="sticky top-0 z-40 border-b border-line bg-ink/80 backdrop-blur-md">
+      <div className="mx-auto max-w-3xl px-4 h-14 flex items-center justify-between gap-4">
+        <Link to="/home" className="font-display text-xl tracking-tight">
+          noodle<span className="text-acid">.</span>
+        </Link>
+
+        <nav className="flex items-center gap-1">
+          <NavLink to="/home" className={linkClass} end>
+            Explore
+          </NavLink>
+          <NavLink to="/follows" className={linkClass}>
+            Follows
+          </NavLink>
+          <NavLink to="/profile" className={linkClass}>
+            Profile
+          </NavLink>
+        </nav>
+
+        <div className="flex items-center gap-2">
+          <Link
+            to="/profile"
+            className="w-8 h-8 rounded-lg bg-acid text-acid-ink font-display font-semibold flex items-center justify-center text-sm hover:bg-acid-dim transition-colors"
+            title="Your profile"
+          >
+            n
+          </Link>
+          <button
+            onClick={handleLogout}
+            className="p-2 rounded-lg text-muted hover:text-text hover:bg-raised transition-colors"
+            title="Log out"
+            aria-label="Log out"
+          >
+            <LogoutIcon />
+          </button>
+        </div>
+      </div>
+    </header>
   );
 }
 

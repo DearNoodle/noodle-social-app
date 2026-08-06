@@ -1,0 +1,66 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  color-scheme: dark;
+}
+
+html {
+  scrollbar-color: #26262e transparent;
+}
+
+body {
+  @apply bg-ink text-text font-body antialiased;
+  background-image: radial-gradient(
+      ellipse 90% 45% at 50% -10%,
+      rgba(214, 255, 63, 0.08),
+      transparent
+    ),
+    radial-gradient(ellipse 60% 40% at 90% 110%, rgba(214, 255, 63, 0.04), transparent);
+  background-attachment: fixed;
+  min-height: 100vh;
+}
+
+::selection {
+  background: #d6ff3f;
+  color: #09090b;
+}
+
+@layer components {
+  .card {
+    @apply bg-surface border border-line rounded-2xl;
+  }
+
+  .btn {
+    @apply inline-flex items-center justify-center gap-2 rounded-xl px-5 py-2.5 text-sm font-semibold transition-all duration-150 active:translate-y-px disabled:pointer-events-none disabled:opacity-50 cursor-pointer;
+  }
+
+  .btn-acid {
+    @apply btn bg-acid text-acid-ink hover:bg-acid-dim hover:-translate-y-px;
+  }
+
+  .btn-ghost {
+    @apply btn border border-line text-text hover:border-muted/50 hover:bg-raised;
+  }
+
+  .btn-danger {
+    @apply btn border border-red-500/40 text-red-400 hover:bg-red-500/10;
+  }
+
+  .input {
+    @apply w-full rounded-xl border border-line bg-ink px-4 py-2.5 text-sm text-text placeholder:text-muted transition-colors focus:border-acid focus:outline-none focus:ring-1 focus:ring-acid/40;
+  }
+
+  .label {
+    @apply block text-[11px] uppercase tracking-[0.18em] text-muted mb-2;
+  }
+
+  .eyebrow {
+    @apply text-[11px] uppercase tracking-[0.28em] text-muted;
+  }
+
+  .link-soft {
+    @apply text-muted hover:text-text transition-colors;
+  }
+}
