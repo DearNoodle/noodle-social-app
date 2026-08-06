@@ -8,7 +8,7 @@
   },
   "workspaces": [
     "frontend",
-    "api"
+    "server"
   ],
   "scripts": {
     "build": "npm --prefix frontend run build"

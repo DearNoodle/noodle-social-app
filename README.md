@@ -10,19 +10,24 @@ Live demo: **TBD** (deploy with the steps below)
 ```
 odin-book/
 ├── frontend/        React 18 + Vite + Tailwind (dark editorial design system)
-├── api/             Express 5 + Prisma + PostgreSQL (Vercel serverless functions)
+├── server/          Express 5 + Prisma + PostgreSQL (all backend code)
+├── api/             Single Vercel serverless function entry (requires ../server/app)
 ├── vercel.json      Build + rewrite rules for the single Vercel deployment
-└── package.json     Root build script (vite build)
+└── package.json     npm workspaces root (frontend + server)
 ```
 
 One Vercel project hosts everything: the static frontend **and** the API as serverless
 functions under the same origin (`/api/*`). No CORS, no cold-start on a separate free tier,
 no cross-site cookie problems — auth just works with a same-site httpOnly cookie.
 
+> `api/` contains only a 1-line wrapper so Vercel's function scanner sees a single
+> function (Hobby plan caps a deployment at 12 functions). The Express app itself
+> lives in `server/`.
+
 | Layer    | Service      |
 | -------- | ------------ |
 | Frontend | Vercel (static, `frontend/dist`) |
-| API      | Vercel (serverless function, `api/app.js`) |
+| API      | Vercel (serverless function, `api/index.js` → `server/app.js`) |
 | Database | Neon Postgres (Prisma ORM) |
 | Uploads  | Cloudinary (avatars, post images) |
 | Auth     | Local (bcrypt + JWT cookie) + GitHub OAuth |
@@ -37,8 +42,8 @@ no cross-site cookie problems — auth just works with a same-site httpOnly cook
 ## Local development
 
 ```bash
-# 1. Backend — needs a DATABASE_URL (Neon free tier works) and the env vars from api/.env.example
-cd api
+# 1. Backend — needs a DATABASE_URL (Neon free tier works) and the env vars from server/.env.example
+cd server
 cp .env.example .env        # fill in DATABASE_URL, JWT_SECRET, GITHUB_*, CLOUDINARY_*
 npm install                 # also runs prisma generate
 npm run db:push             # create tables
@@ -56,14 +61,14 @@ npm run dev                 # http://localhost:5173
 1. Create a **Neon** project (free tier) and copy its connection string → `DATABASE_URL`.
 2. Import this repo on Vercel (root directory stays at repo root — `vercel.json` handles the build).
    No framework preset needed; the build command and output directory are already configured.
-3. Add the environment variables from `api/.env.example` to the Vercel project:
+3. Add the environment variables from `server/.env.example` to the Vercel project:
    `DATABASE_URL`, `JWT_SECRET`, `GITHUB_CLIENT_ID`, `GITHUB_CLIENT_SECRET`,
    `GITHUB_CALLBACK_URL`, `FRONTEND_URL`, `CLOUDINARY_CLOUD_NAME`, `CLOUDINARY_API_KEY`,
    `CLOUDINARY_API_SECRET`.
    - `GITHUB_CALLBACK_URL` = `https://<your-project>.vercel.app/api/login/github/callback`
    - `FRONTEND_URL` = `https://<your-project>.vercel.app`
 4. Create the tables + seed the demo data (one-time). Use a local run with the same `DATABASE_URL`,
-   or via `vercel dev`: `cd api && npm run db:push && npm run seed`.
+   or via `vercel dev`: `cd server && npm run db:push && npm run seed`.
 5. In GitHub Developer Settings → your OAuth app, set the Authorization callback URL to the
    `GITHUB_CALLBACK_URL` value.
 6. Deploy. First page load may be a few seconds while the Neon database warms up — afterwards
