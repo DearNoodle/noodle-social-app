@@ -2,6 +2,10 @@
   "name": "noodle",
   "private": true,
   "version": "1.0.0",
+  "workspaces": [
+    "frontend",
+    "api"
+  ],
   "scripts": {
     "build": "npm --prefix frontend run build"
   }
