@@ -3,7 +3,7 @@
 A small social network — post, like, comment, follow. Dark editorial UI, one-tap GitHub login.
 Built as a portfolio demo.
 
-Live demo: **TBD** (deploy with the steps below)
+[**Try the live demo**](https://noodle-social-app-theta.vercel.app/)
 
 ## Architecture
 
