@@ -10,8 +10,8 @@ const FEATURES = [
   },
   {
     num: "02",
-    title: "Sip the feed",
-    desc: "A calm, dark feed. Like, comment, and let it simmer.",
+    title: "Relax with the feed",
+    desc: "Browse a calm, dark feed. Like and comment at your own pace.",
   },
   {
     num: "03",
@@ -50,12 +50,12 @@ function LandingPage() {
         <div className="animate-fade-up">
           <p className="eyebrow text-acid">a social feed · served hot</p>
           <h1 className="font-display text-5xl sm:text-7xl leading-[1.05] tracking-tight mt-6 max-w-2xl">
-            The feed that{" "}
-            <em className="italic text-acid">cooks</em>, not just simmers.
+            The feed that's always{" "}
+            <em className="italic text-acid">cooking</em>.
           </h1>
           <p className="text-muted text-lg mt-6 max-w-xl leading-relaxed">
-            Noodle is a small social network demo — post, like, comment and follow, with one-tap
-            GitHub login. Boiled on Express + Postgres, served crisp on Vercel.
+            Noodle is a demo social network, served fresh. Post, like, comment, and follow. Pull up
+            a chair — sign in with GitHub or a username and password.
           </p>
           <div className="flex flex-wrap items-center gap-3 mt-10">
             <Link to="/login" className="btn-acid text-base px-7 py-3">
